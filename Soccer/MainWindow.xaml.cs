@@ -34,11 +34,14 @@ namespace Soccer
         public ConcurrentQueue<MatchDataStruct> GoodMatchesQueue = new ConcurrentQueue<MatchDataStruct>();
         private ObservableCollection<MatchedMatches> GoodMatchesList = new ObservableCollection<MatchedMatches>();
 
+        //public FlashScore FlashScore;
+
         public MainWindow()
         {
             main = this;
             InitializeComponent();
 
+            //this.FlashScore = new FlashScore();
 
             Thread UIThread = new Thread(UpdateUI_Thread);
             UIThread.Start();
@@ -88,6 +91,7 @@ namespace Soccer
                             {
                                 Name = receivingStruct.MatchName,
                                 Link = receivingStruct.MatchLink,
+                                Cota = receivingStruct.Cota == -1 ? "N/A" : receivingStruct.Cota.ToString(),
                                 ScoredAndConceded_A = receivingStruct.Scored_and_Conceded[0],
                                 ScoredAndConceded_B = receivingStruct.Scored_and_Conceded[1],
                                 ScoredAndConceded_C = receivingStruct.Scored_and_Conceded[2],
@@ -110,6 +114,8 @@ namespace Soccer
             FlyOut_FindingMatches.Visibility = Visibility.Visible;
             PageDataStruct fullStruct = Parser.GetLinksStruct;
             List<string> linksLust = fullStruct.MatchLink;
+
+            Parser.InitializeJSDriver();
 
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += (callbackSender, callbackEvent) =>
@@ -277,7 +283,9 @@ namespace Soccer
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            //System.Environment.Exit(1);
+            Parser.CloseDriver();
+            System.Environment.Exit(1);
+
         }
 
         /* private void Button_ClearTables_Click(object sender, RoutedEventArgs e)

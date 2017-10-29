@@ -10,6 +10,7 @@ namespace Soccer
     {
         public string Name { get; set; }
         public string Link { get; set; }
+        public string Cota { get; set; }
         public float ScoredAndConceded_A { get; set; }
         public float ScoredAndConceded_B { get; set; }
         public float ScoredAndConceded_C { get; set; }

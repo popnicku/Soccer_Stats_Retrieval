@@ -29,6 +29,7 @@ namespace Soccer
         public float[] Scored_and_Conceded;
         public float Average1_and_4;
         public float[] CleanSheets;
+        public float Cota;
     };
 
 
@@ -39,6 +40,7 @@ namespace Soccer
 
         private PageDataStruct PageData;
         private List<MatchDataStruct> MatchData;
+        private FlashScore flashScore;
 
         private const int A = 0;
         private const int B = 1;
@@ -123,6 +125,11 @@ namespace Soccer
             }));
         }
 
+        public void InitializeJSDriver()
+        {
+            flashScore = new FlashScore();
+        }
+
         public async void ProcessMatchesPage(string url)
         {
             // process each page individually
@@ -131,12 +138,12 @@ namespace Soccer
             float[] STR_scoredAndConceded = new float[4];
             float STR_average1and4 = 0;
             float[] STR_cleanSheets = new float[2];
+            float STR_cota = 0;
+
 
             MatchDataStruct matchToAdd = new MatchDataStruct();
             if (url != null)
             {
-
-
 
                 STR_matchUrl = GetEncodedURL("http://soccerstats.com/" + url);
                 string pageContent = await GetPageContent(url);
@@ -155,6 +162,9 @@ namespace Soccer
                     matchToAdd.Average1_and_4 = STR_average1and4;
                     matchToAdd.CleanSheets = STR_cleanSheets;
                     matchToAdd.MatchName = STR_matchName;
+                    //get odd for the specific match
+                    STR_cota = flashScore.GetOddForMatch(STR_matchName);
+                    matchToAdd.Cota = STR_cota;
 
                     MatchData.Add(matchToAdd);
                     MainWindow.main.GoodMatchesQueue.Enqueue(matchToAdd);
@@ -293,7 +303,10 @@ namespace Soccer
             return stringToReturn;
         }
 
-
+        public void CloseDriver()
+        {
+            flashScore.CloseDriver();
+        }
 
         private void PushStringToQueue(string stringToSend)
         {
