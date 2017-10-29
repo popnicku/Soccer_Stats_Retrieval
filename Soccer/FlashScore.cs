@@ -9,24 +9,32 @@ using OpenQA.Selenium.PhantomJS;
 using System.Collections.ObjectModel;
 using OpenQA.Selenium;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Soccer
 {
     public class FlashScore
     {
         private PhantomJSDriver JSDriver = null;
-        private ReadOnlyCollection<IWebElement> Matches;
+        private ReadOnlyCollection<IWebElement> Matches = null;
 
         //private PhantomJSDriver JSDriver_ForPage = null;
-        private IReadOnlyCollection<IWebElement> OddPage;
+        //private IReadOnlyCollection<IWebElement> OddPage;
 
         public FlashScore()
         {
-            StartPhantomServer();
-            Matches = GetMatchesList("http://flashscore.com");
 
         }
 
+
+        public void Init()
+        {
+            StartPhantomServer();
+            if (Matches == null)
+            {
+                Matches = GetMatchesList("http://flashscore.com");
+            }
+        }
 
         private void StartPhantomServer()
         {
@@ -38,12 +46,12 @@ namespace Soccer
 
         private ReadOnlyCollection<IWebElement> GetMatchesList(string url)
         {
+            ReadOnlyCollection<IWebElement> matchesNotStarted = null;
             JSDriver.Url = url;
             JSDriver.Navigate();
 
             string content = JSDriver.PageSource;
-            ReadOnlyCollection<IWebElement> matchesNotStarted = JSDriver.FindElementsByClassName("stage-scheduled"); // only get matches that already started
-
+            matchesNotStarted = JSDriver.FindElementsByClassName("stage-scheduled"); // only get matches that already started
             return matchesNotStarted;
         }
 
@@ -118,10 +126,18 @@ namespace Soccer
             return foundMatchLink;
         }
 
-
         public void CloseDriver()
         {
-            JSDriver.Close();
+            if (JSDriver != null)
+            {
+                JSDriver.Quit();
+                JSDriver.Dispose();
+            }
+        }
+
+        public bool IsServerRunning()
+        {
+            return JSDriver == null ? false : true;
         }
 
         private string FindURLByName(string url)

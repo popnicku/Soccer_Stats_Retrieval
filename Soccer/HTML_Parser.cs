@@ -35,12 +35,12 @@ namespace Soccer
 
     public class HTML_Parser
     {
-        private WebClient MainPageWeb;
-        private string MainPageContent;
+        //private WebClient MainPageWeb;
+        //private string MainPageContent;
 
         private PageDataStruct PageData;
         private List<MatchDataStruct> MatchData;
-        private FlashScore flashScore;
+        private FlashScore flashScore = null;
 
         private const int A = 0;
         private const int B = 1;
@@ -49,18 +49,28 @@ namespace Soccer
 
         // private const int _MATCHES_LIMIT_ = 100;
 
-        public HTML_Parser(string url)
+        public HTML_Parser()
         {
             PageData = new PageDataStruct();
 
             MatchData = new List<MatchDataStruct>();
 
             PageData.ScoredAndConceded = new string[4];
+
+
             InitializeStructure();
+        }
+
+        public void InitParser(string url)
+        {
 
             Thread getLinksThread = new Thread(() => GetLinksFromPage(url));
             getLinksThread.Start();
 
+            if (flashScore == null)
+            {
+                flashScore = new FlashScore();
+            }
         }
 
         private void InitializeStructure()
@@ -127,7 +137,8 @@ namespace Soccer
 
         public void InitializeJSDriver()
         {
-            flashScore = new FlashScore();
+            //flashScore = new FlashScore();
+            flashScore.Init();
         }
 
         public async void ProcessMatchesPage(string url)
@@ -164,6 +175,7 @@ namespace Soccer
                     matchToAdd.MatchName = STR_matchName;
                     //get odd for the specific match
                     STR_cota = flashScore.GetOddForMatch(STR_matchName);
+
                     matchToAdd.Cota = STR_cota;
 
                     MatchData.Add(matchToAdd);
@@ -317,7 +329,7 @@ namespace Soccer
         {
             get
             {
-               return PageData.MatchLink;
+                return PageData.MatchLink;
             }
         }
 
@@ -328,7 +340,6 @@ namespace Soccer
                 return this.PageData;
             }
         }
-
 
     }
 }
