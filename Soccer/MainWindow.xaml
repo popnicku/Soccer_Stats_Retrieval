@@ -1,0 +1,46 @@
+﻿<Controls:MetroWindow x:Class="Soccer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:Soccer"
+        mc:Ignorable="d"
+        Title="Soccer Stats Retrieval" Height="720" Width="1360">
+    <Grid>
+        <Label Content="0" x:Name="Label_LinksFound" HorizontalAlignment="Left" Margin="575,4,0,0" VerticalAlignment="Top"/>
+        <Label Content="Matches found:" HorizontalAlignment="Left" Margin="483,4,0,0" VerticalAlignment="Top"/>
+        <Label Content="Finding Matches..." x:Name="Label_FindingMatches" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="380,4,0,0"/>
+        <DataGrid x:Name="DataGrid_MatchesGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="213" Margin="15,36,0,0" VerticalAlignment="Top" Width="1318">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Match Name" Binding="{Binding Path=MatchName}"/>
+                <DataGridTextColumn Header="Match Link" Binding="{Binding Path=MatchLink}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="Start" x:Name="Button_Start" IsEnabled="False" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="1258,10,0,0" VerticalAlignment="Top" Click="Button_Start_Click" Width="75"/>
+        <DataGrid x:Name="DataGrid_GoodMatches" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="388" Margin="15,273,0,0" VerticalAlignment="Top" Width="1318">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Match Name" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Link"  Binding="{Binding Path=Link}"/>
+                <DataGridTextColumn Header="Scored+Conc.(A)" Binding="{Binding Path=ScoredAndConceded_A}"/>
+                <DataGridTextColumn Header="Scored+Conc.(B)" Binding="{Binding Path=ScoredAndConceded_B}"/>
+                <DataGridTextColumn Header="Scored+Conc.(C)" Binding="{Binding Path=ScoredAndConceded_C}"/>
+                <DataGridTextColumn Header="Scored+Conc.(D)" Binding="{Binding Path=ScoredAndConceded_D}"/>
+                <DataGridTextColumn Header="Average" Binding="{Binding Path=Average}"/>
+                <DataGridTextColumn Header="Clean Sheets Home" Binding="{Binding Path=CleanSheets_Home}"/>
+                <DataGridTextColumn Header="Clean Sheets Away" Binding="{Binding Path=CleanSheets_Away}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="Button_GetTodaysMatches" Content="Get Today's Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="15,4,0,0" VerticalAlignment="Top" Width="163" Click="Button_GetTodaysMatches_Click"/>
+        <Button x:Name="Button_GetTomorrowsMatches" Content="Get Tomorrow's Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="196,4,0,0" VerticalAlignment="Top" Width="163" Click="Button_GetTomorrowsMatches_Click"/>
+        <!--<Button x:Name="Button_ClearTables" Style="{StaticResource AccentedSquareButtonStyle}" Content="Clear Tables" HorizontalAlignment="Left" Margin="606,5,0,0" VerticalAlignment="Top" Width="108" Click="Button_ClearTables_Click"/>-->
+
+        <!--<TextBox x:Name="TextBox_MatchingMatches" HorizontalAlignment="Left" Height="271" Margin="15,267,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="651"/>-->
+    </Grid>
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout x:Name="FlyOut_FindingMatches" Header="Finding matches, please wait..." Position="Bottom" Visibility="Collapsed">
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+</Controls:MetroWindow>
