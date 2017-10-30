@@ -16,8 +16,11 @@ namespace Soccer
     public class FlashScore
     {
         private PhantomJSDriver JSDriver = null;
-        private ReadOnlyCollection<IWebElement> Matches = null;
+        private ReadOnlyCollection<IWebElement> MainPageMatchesList = null;
 
+        private List<FlashScore_MatchData> List_MatchData = new List<FlashScore_MatchData>();
+
+        private const int NO_ODD_ON_FLASHSCORE = -2;
         //private PhantomJSDriver JSDriver_ForPage = null;
         //private IReadOnlyCollection<IWebElement> OddPage;
 
@@ -30,9 +33,21 @@ namespace Soccer
         public void Init()
         {
             StartPhantomServer();
-            if (Matches == null)
+            if (MainPageMatchesList == null)
             {
-                Matches = GetMatchesList("http://flashscore.com");
+                MainPageMatchesList = GetMatchesList("http://flashscore.com");
+                foreach(IWebElement singleMatch in MainPageMatchesList)
+                {
+                    string nameToAdd = singleMatch.Text;
+                    string link;
+                    nameToAdd = ReplaceShortString(nameToAdd);
+                    nameToAdd = nameToAdd.Replace("\r\n-\r\n", "\r\n");
+                    nameToAdd = nameToAdd.Replace("\r", "");
+
+                    link = singleMatch.GetAttribute("id").Split('_')[2];
+
+                    List_MatchData.Add(new FlashScore_MatchData { Name = nameToAdd, Link = link });
+                }
             }
         }
 
@@ -69,47 +84,63 @@ namespace Soccer
 
                 string content = JSDriver.PageSource;
                 ReadOnlyCollection<IWebElement> matchOdds = JSDriver.FindElementsById("odds_ou_1.5");
-                currentOddCell = matchOdds[0];
-                currentOddCellString = currentOddCell.Text;
-                Regex regex = new Regex(@"([0-9]{1}).([0-9]{2})(\r)");
-                Match regex_match = regex.Match(currentOddCellString);
-                if (regex_match.Success)
+                if (matchOdds.Count > 0)
                 {
-                    matchOdd = float.Parse(regex_match.Value);
+                    currentOddCell = matchOdds[0];
+                    currentOddCellString = currentOddCell.Text;
+                    Regex regex = new Regex(@"([0-9]{1}).([0-9]{2})(\r)");
+                    Match regex_match = regex.Match(currentOddCellString);
+                    if (regex_match.Success)
+                    {
+                        matchOdd = float.Parse(regex_match.Value);
+                    }
                 }
+                else
+                {
+                    matchOdd = NO_ODD_ON_FLASHSCORE;
+                }
+            }
+            else if(oddUrlForMatch == "statelException")
+            {
+                return -3;
             }
             return matchOdd;
         }
 
-        public string GetLinkForMatch(string matchName)
+       /* public string GetLinkForMatch(string matchName)
         {
             string aux = null;
 
             string homeTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[0];
             string awayTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[1];
 
-            homeTeam = homeTeam.Replace("Standard", "St.");
-            awayTeam = awayTeam.Replace("Standard", "St.");
+            homeTeam = ReplaceShortString(homeTeam);    //homeTeam.Replace("Standard", "St.");
+            awayTeam = ReplaceShortString(awayTeam);    //awayTeam.Replace("Standard", "St.");
 
             string homeTeamFromFlash = null, awayTeamFromFlash = null;
 
             string foundMatchLink = null;
-            foreach (IWebElement match in Matches)
+            foreach (IWebElement singleMatch in MainPageMatchesList)
             {
-                if (match != null)
+                if (singleMatch != null)
                 {
+
+
                     //match.Text:
                     //  "22:00  \r\nLille\r\nMarseille"
                     //  "20:30  \r\nJusto Jose de Urquiza\r\n-\r\nDock Sud\r\n   "
                     try
                     {
-                        aux = match.Text.Replace("\r\n-\r\n", "\r\n");
+                        aux = singleMatch.Text.Replace("\r\n-\r\n", "\r\n");
                         aux = aux.Replace("\r", "");
                     }
-                    catch(Exception e)
+                    catch(StaleElementReferenceException e)
                     {
-                        break;
+                        //Console.WriteLine(e.Message);
+                        return "statelException";
+                        //break;
                     }
+
                     homeTeamFromFlash = aux.Split('\n')[1];
                     awayTeamFromFlash = aux.Split('\n')[2];
 
@@ -117,13 +148,52 @@ namespace Soccer
                     {
                         if (awayTeam.Contains(awayTeamFromFlash) || awayTeamFromFlash.Contains(awayTeam)) // awayTeam Found
                         {
-                            foundMatchLink = match.GetAttribute("id").Split('_')[2];
+                            foundMatchLink = singleMatch.GetAttribute("id").Split('_')[2];
                             break;
                         }
                     }
                 }
             }
             return foundMatchLink;
+        }*/
+
+
+        public string GetLinkForMatch(string matchName)
+        {
+            string aux = null;
+            string foundMatchLink = null;
+            string homeTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[0];
+            string awayTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[1];
+
+            homeTeam = ReplaceShortString(homeTeam);    //homeTeam.Replace("Standard", "St.");
+            awayTeam = ReplaceShortString(awayTeam);    //awayTeam.Replace("Standard", "St.");
+
+            foreach (FlashScore_MatchData data in List_MatchData)
+            {
+                string homeTeamFromFlash = null, awayTeamFromFlash = null;
+                homeTeamFromFlash = data.Name.Split('\n')[1];
+                awayTeamFromFlash = data.Name.Split('\n')[2];
+
+                if (homeTeam.Contains(homeTeamFromFlash) || homeTeamFromFlash.Contains(homeTeam)) // home team found
+                {
+                    if (awayTeam.Contains(awayTeamFromFlash) || awayTeamFromFlash.Contains(awayTeam)) // awayTeam Found
+                    {
+                        foundMatchLink = data.Link;
+                        break;
+                    }
+                }
+            }
+            return foundMatchLink;
+        }
+
+        private string ReplaceShortString(string stringToEdit)
+        {
+            string stringToReturn = stringToEdit;
+
+            stringToReturn = stringToReturn.Replace("Standard", "Std.");
+            stringToReturn = stringToReturn.Replace("Cent.", "Central");
+
+            return stringToReturn;
         }
 
         public void CloseDriver()

@@ -93,7 +93,15 @@ namespace Soccer
                             {
                                 Name = receivingStruct.MatchName,
                                 Link = receivingStruct.MatchLink,
-                                Cota = receivingStruct.Cota == -1 ? "N/A" : receivingStruct.Cota.ToString(),
+                                Cota = receivingStruct.Cota == -1 ? "N/A" : 
+                                (
+                                    (
+                                        receivingStruct.Cota == -2 ? ("No odd") : 
+                                        (
+                                            receivingStruct.Cota == -3 ? ("Exc") : receivingStruct.Cota.ToString()
+                                        )
+                                    )
+                                ),
                                 ScoredAndConceded_A = receivingStruct.Scored_and_Conceded[0],
                                 ScoredAndConceded_B = receivingStruct.Scored_and_Conceded[1],
                                 ScoredAndConceded_C = receivingStruct.Scored_and_Conceded[2],
@@ -194,7 +202,7 @@ namespace Soccer
             FlyOut_FindingMatches.Header = "Getting Tomorrow's matches, please wait...";
             FlyOut_FindingMatches.Visibility = Visibility.Visible;
             //Parser = new HTML_Parser("http://www.soccerstats.com/matches.asp?matchday=2");
-            Parser.InitParser("http://www.soccerstats.com/matches.asp?matchday=2");
+            Parser.InitParser("http://www.soccerstats.com/matches.asp?matchday=5");
 
         }
 

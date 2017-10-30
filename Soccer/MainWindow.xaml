@@ -24,11 +24,11 @@
                 <DataGridTextColumn Header="Match Name" Binding="{Binding Path=Name}"/>
                 <DataGridTextColumn Header="Link"  Binding="{Binding Path=Link}"/>
                 <DataGridTextColumn Header="Cota" Binding="{Binding Path=Cota}"/>
+                <DataGridTextColumn Header="Average" Binding="{Binding Path=Average}"/>
                 <DataGridTextColumn Header="Scored+Conc.(A)" Binding="{Binding Path=ScoredAndConceded_A}"/>
                 <DataGridTextColumn Header="Scored+Conc.(B)" Binding="{Binding Path=ScoredAndConceded_B}"/>
                 <DataGridTextColumn Header="Scored+Conc.(C)" Binding="{Binding Path=ScoredAndConceded_C}"/>
                 <DataGridTextColumn Header="Scored+Conc.(D)" Binding="{Binding Path=ScoredAndConceded_D}"/>
-                <DataGridTextColumn Header="Average" Binding="{Binding Path=Average}"/>
                 <DataGridTextColumn Header="Clean Sheets Home" Binding="{Binding Path=CleanSheets_Home}"/>
                 <DataGridTextColumn Header="Clean Sheets Away" Binding="{Binding Path=CleanSheets_Away}"/>
             </DataGrid.Columns>

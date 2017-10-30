@@ -115,7 +115,7 @@ namespace Soccer
                             {
                                 PageData.MatchLink.Add(link);
                                 //PageData.MatchName.Add(item.InnerText);
-                                Console.WriteLine("link: " + link);
+                                //Console.WriteLine("link: " + link);
                                 PushStringToQueue(link);
 
                             }

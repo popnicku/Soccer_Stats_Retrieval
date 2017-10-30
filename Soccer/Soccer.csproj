@@ -130,6 +130,7 @@
     </Compile>
     <Compile Include="DataObject.cs" />
     <Compile Include="FlashScore.cs" />
+    <Compile Include="FlashScore_MatchData.cs" />
     <Compile Include="HTML_Parser.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
