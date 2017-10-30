@@ -55,7 +55,6 @@ namespace Soccer
                 DropDown_MatchDay.Items.Add("Saturday");
                 DropDown_MatchDay.Items.Add("Sunday");
             }
-
             //this.FlashScore = new FlashScore();
 
             Thread UIThread = new Thread(UpdateUI_Thread);

@@ -38,8 +38,8 @@
             </DataGrid>
         </Border>
         <Button x:Name="Button_GetTodaysMatches" Content="Get Today's Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="15,4,0,0" VerticalAlignment="Top" Width="163" Click="Button_GetTodaysMatches_Click"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="213" Margin="646,36,0,0" VerticalAlignment="Top" Width="350">
-            <Grid x:Name="Settings_Panel" Margin="0,0,0,0">
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="215" Margin="646,36,0,0" VerticalAlignment="Top" Width="350">
+            <Grid x:Name="Settings_Panel" Margin="0,0,0,-1">
                 <Label Content="Parse Odds:" FontSize="18" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
                 <Controls:ToggleSwitch  x:Name="Toggle_ParseOdds" IsChecked="True" IsCheckedChanged="Toggle_ParseOdds_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,10,0,163"/>
 
@@ -53,6 +53,8 @@
                 <Button x:Name="Button_GetTomorrowsMatches" Content="Get Future Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Center" Margin="20,157,20,0" VerticalAlignment="Top" Width="308" Click="Button_GetTomorrowsMatches_Click" Height="33"/>
             </Grid>
         </Border>
+        <Calendar x:Name="Calendar_" HorizontalAlignment="Left" Margin="1035,36,0,0" VerticalAlignment="Top" Height="215" Width="183" FirstDayOfWeek="Monday" />
+
         <!--<Button x:Name="Button_ClearTables" Style="{StaticResource AccentedSquareButtonStyle}" Content="Clear Tables" HorizontalAlignment="Left" Margin="606,5,0,0" VerticalAlignment="Top" Width="108" Click="Button_ClearTables_Click"/>-->
 
         <!--<TextBox x:Name="TextBox_MatchingMatches" HorizontalAlignment="Left" Height="271" Margin="15,267,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="651"/>-->

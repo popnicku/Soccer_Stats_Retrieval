@@ -190,8 +190,23 @@ namespace Soccer
         {
             string stringToReturn = stringToEdit;
 
-            stringToReturn = stringToReturn.Replace("Standard", "Std.");
-            stringToReturn = stringToReturn.Replace("Cent.", "Central");
+            try
+            {
+                stringToReturn = stringToReturn.Replace("Standard", "Std.");
+                stringToReturn = stringToReturn.Replace("Cent.", "Central");
+                stringToReturn = stringToReturn.Replace("Stuttgart B", "Stuttgart II");
+                stringToReturn = stringToReturn.Replace("Kick.", "Kickers");
+                stringToReturn = stringToReturn.Replace("Walld.", "Walldorf");
+                //stringToReturn = stringToReturn.Replace("Hessen Kassel", "Kassel");
+                stringToReturn = stringToReturn.Replace("Al ", "Al-");
+                //stringToReturn = stringToReturn.Replace("Graffin Vlasim ", "Vlasim");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("[ERROR] exception: " + e.Message);
+            }
+
+
 
             return stringToReturn;
         }
