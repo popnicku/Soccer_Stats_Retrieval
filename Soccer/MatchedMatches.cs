@@ -18,5 +18,7 @@ namespace Soccer
         public float Average { get; set; }
         public float CleanSheets_Home { get; set; }
         public float CleanSheets_Away { get; set; }
+
+        public bool? ParseOdds { get; set; }
     }
 }

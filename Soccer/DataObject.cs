@@ -8,7 +8,6 @@ namespace Soccer
 {
     public class DataObject
     {
-        public string MatchName { get; set; }
         public string MatchLink { get; set; }
     }
 }

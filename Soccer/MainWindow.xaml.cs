@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -36,12 +37,24 @@ namespace Soccer
         public ConcurrentQueue<MatchDataStruct> GoodMatchesQueue = new ConcurrentQueue<MatchDataStruct>();
         private ObservableCollection<MatchedMatches> GoodMatchesList = new ObservableCollection<MatchedMatches>();
 
+        public bool ParseOdds = true;
+        //private bool AutoStart = false;
+
         //public FlashScore FlashScore;
 
         public MainWindow()
         {
             main = this;
             InitializeComponent();
+            {
+                DropDown_MatchDay.Items.Add("Monday");
+                DropDown_MatchDay.Items.Add("Tuesday");
+                DropDown_MatchDay.Items.Add("Wednesday");
+                DropDown_MatchDay.Items.Add("Thursday");
+                DropDown_MatchDay.Items.Add("Friday");
+                DropDown_MatchDay.Items.Add("Saturday");
+                DropDown_MatchDay.Items.Add("Sunday");
+            }
 
             //this.FlashScore = new FlashScore();
 
@@ -155,13 +168,39 @@ namespace Soccer
             Scored+conc. per match
         */
 
+        private int GetDayIDFromName(string day)
+        {
+            switch (day)
+            {
+                case "Monday":
+                    return 5;
+                case "Tuesday":
+                    return 2;
+                case "Wednesday":
+                    return 3;
+                case "Thursday":
+                    return 4;
+                case "Friday":
+                    return 6;
+                case "Saturday":
+                    return 7;
+                case "Sunday":
+                    return 1;
+                default:
+                    return -1;
+            }
+        }
 
+        /* ============================================================================================================================ */
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
             PageDataStruct fullStruct = Parser.GetLinksStruct;
             List<string> linksLust = fullStruct.MatchLink;
 
-            Parser.InitializeJSDriver();
+            if (ParseOdds)
+            {
+                Parser.InitializeJSDriver();
+            }
 
             FlyOut_FindingMatches.Header = "Finding matches to bet, please wait...";
             FlyOut_FindingMatches.Visibility = Visibility.Visible;
@@ -198,20 +237,39 @@ namespace Soccer
             //t.Start();
         }
 
+
         private void Button_GetTodaysMatches_Click(object sender, RoutedEventArgs e)
         {
             FlyOut_FindingMatches.Header = "Getting Today's matches, please wait...";
             FlyOut_FindingMatches.Visibility = Visibility.Visible;
             //Parser = new HTML_Parser("http://www.soccerstats.com/matches.asp");
             Parser.InitParser("http://www.soccerstats.com/matches.asp");
+
+            /*if(AutoStart)
+            {
+                Button_Start_Click(sender, e);
+            }*/
         }
 
-        private void Button_GetTomorrowsMatches_Click(object sender, RoutedEventArgs e)
+        private async void Button_GetTomorrowsMatches_Click(object sender, RoutedEventArgs e)
         {
-            FlyOut_FindingMatches.Header = "Getting Tomorrow's matches, please wait...";
-            FlyOut_FindingMatches.Visibility = Visibility.Visible;
-            //Parser = new HTML_Parser("http://www.soccerstats.com/matches.asp?matchday=2");
-            Parser.InitParser("http://www.soccerstats.com/matches.asp?matchday=2");
+
+            if(DropDown_MatchDay.SelectedIndex >= 0)
+            {
+                FlyOut_FindingMatches.Header = "Getting " + DropDown_MatchDay.SelectedValue + " matches, please wait...";
+                FlyOut_FindingMatches.Visibility = Visibility.Visible;
+                //Parser = new HTML_Parser("http://www.soccerstats.com/matches.asp?matchday=2");
+                Parser.InitParser("http://www.soccerstats.com/matches.asp?matchday=" + GetDayIDFromName(DropDown_MatchDay.SelectedValue.ToString()));
+
+                /*if (AutoStart)
+                {
+                    Button_Start_Click(sender, e);
+                }*/
+            }
+            else
+            {
+                await this.ShowMessageAsync("Invalid Match Day", "Please select a match day!");
+            }
 
         }
 
@@ -223,6 +281,16 @@ namespace Soccer
             }
             System.Environment.Exit(1);
 
+        }
+
+        private void Toggle_ParseOdds_IsCheckedChanged(object sender, EventArgs e)
+        {
+            ParseOdds = Toggle_ParseOdds.IsChecked.Value;
+        }
+
+        private void Toggle_AutoStart_IsCheckedChanged(object sender, EventArgs e)
+        {
+            //AutoStart = Toggle_AutoStart.IsChecked.Value;
         }
     }
 }

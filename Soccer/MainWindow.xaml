@@ -9,32 +9,50 @@
         mc:Ignorable="d"
         Title="Soccer Stats Retrieval" Height="720" Width="1360">
     <Grid>
-        <Label Content="0" x:Name="Label_LinksFound" HorizontalAlignment="Left" Margin="575,4,0,0" VerticalAlignment="Top"/>
-        <Label Content="Matches found:" HorizontalAlignment="Left" Margin="483,4,0,0" VerticalAlignment="Top"/>
-        <Label Content="Finding Matches..." x:Name="Label_FindingMatches" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="380,4,0,0"/>
-        <DataGrid x:Name="DataGrid_MatchesGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="213" Margin="15,36,0,0" VerticalAlignment="Top" Width="1318">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Match Name" Binding="{Binding Path=MatchName}"/>
-                <DataGridTextColumn Header="Match Link" Binding="{Binding Path=MatchLink}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <Button Content="Start" x:Name="Button_Start" IsEnabled="False" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="1258,10,0,0" VerticalAlignment="Top" Click="Button_Start_Click" Width="75"/>
-        <DataGrid x:Name="DataGrid_GoodMatches" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="388" Margin="15,273,0,0" VerticalAlignment="Top" Width="1318">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Match Name" Binding="{Binding Path=Name}"/>
-                <DataGridTextColumn Header="Link"  Binding="{Binding Path=Link}"/>
-                <DataGridTextColumn Header="Cota" Binding="{Binding Path=Cota}"/>
-                <DataGridTextColumn Header="Average" Binding="{Binding Path=Average}"/>
-                <DataGridTextColumn Header="Scored+Conc.(A)" Binding="{Binding Path=ScoredAndConceded_A}"/>
-                <DataGridTextColumn Header="Scored+Conc.(B)" Binding="{Binding Path=ScoredAndConceded_B}"/>
-                <DataGridTextColumn Header="Scored+Conc.(C)" Binding="{Binding Path=ScoredAndConceded_C}"/>
-                <DataGridTextColumn Header="Scored+Conc.(D)" Binding="{Binding Path=ScoredAndConceded_D}"/>
-                <DataGridTextColumn Header="Clean Sheets Home" Binding="{Binding Path=CleanSheets_Home}"/>
-                <DataGridTextColumn Header="Clean Sheets Away" Binding="{Binding Path=CleanSheets_Away}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Label Content="0" x:Name="Label_LinksFound" HorizontalAlignment="Left" Margin="473,5,0,0" VerticalAlignment="Top"/>
+        <Label Content="Matches found:" HorizontalAlignment="Left" Margin="381,5,0,0" VerticalAlignment="Top"/>
+
+        <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,36,0,0">
+            <DataGrid x:Name="DataGrid_MatchesGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="213" Margin="0,0,0,0" VerticalAlignment="Top" Width="576">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Match Link" Binding="{Binding Path=MatchLink}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        <Button Content="Get Matches Data" x:Name="Button_Start" IsEnabled="False" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="194,5,0,0" VerticalAlignment="Top" Click="Button_Start_Click" Width="182"/>
+        
+        <Border BorderBrush="Black" BorderThickness="1" Margin="20,275,20,20">
+            <DataGrid x:Name="DataGrid_GoodMatches" AutoGenerateColumns="False" Height="388"  Margin="0,0,0,0" VerticalAlignment="Top">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Match Name" Binding="{Binding Path=Name}"/>
+                    <DataGridTextColumn Header="Link"  Binding="{Binding Path=Link}"/>
+                    <DataGridTextColumn Header="Cota" Binding="{Binding Path=Cota}"/>
+                    <DataGridTextColumn Header="Average" Binding="{Binding Path=Average}"/>
+                    <DataGridTextColumn Header="Scored+Conc.(A)" Binding="{Binding Path=ScoredAndConceded_A}"/>
+                    <DataGridTextColumn Header="Scored+Conc.(B)" Binding="{Binding Path=ScoredAndConceded_B}"/>
+                    <DataGridTextColumn Header="Scored+Conc.(C)" Binding="{Binding Path=ScoredAndConceded_C}"/>
+                    <DataGridTextColumn Header="Scored+Conc.(D)" Binding="{Binding Path=ScoredAndConceded_D}"/>
+                    <DataGridTextColumn Header="Clean Sheets Home" Binding="{Binding Path=CleanSheets_Home}"/>
+                    <DataGridTextColumn Header="Clean Sheets Away" Binding="{Binding Path=CleanSheets_Away}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
         <Button x:Name="Button_GetTodaysMatches" Content="Get Today's Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="15,4,0,0" VerticalAlignment="Top" Width="163" Click="Button_GetTodaysMatches_Click"/>
-        <Button x:Name="Button_GetTomorrowsMatches" Content="Get Tomorrow's Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="196,4,0,0" VerticalAlignment="Top" Width="163" Click="Button_GetTomorrowsMatches_Click"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="213" Margin="646,36,0,0" VerticalAlignment="Top" Width="350">
+            <Grid x:Name="Settings_Panel" Margin="0,0,0,0">
+                <Label Content="Parse Odds:" FontSize="18" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
+                <Controls:ToggleSwitch  x:Name="Toggle_ParseOdds" IsChecked="True" IsCheckedChanged="Toggle_ParseOdds_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,10,0,163"/>
+
+                <Label Content="Autostart:" Visibility="Hidden" FontSize="18" HorizontalAlignment="Left" Margin="20,49,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
+                <Controls:ToggleSwitch Visibility="Hidden"  x:Name="Toggle_AutoStart" IsChecked="False" IsCheckedChanged="Toggle_AutoStart_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,49,0,124"/>
+
+                <Label Content="Match Day:" FontSize="18" HorizontalAlignment="Left" Margin="20,87,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
+                <Controls:SplitButton x:Name="DropDown_MatchDay" Height="20"  Margin="194,92,20,93">
+                </Controls:SplitButton>
+
+                <Button x:Name="Button_GetTomorrowsMatches" Content="Get Future Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Center" Margin="20,157,20,0" VerticalAlignment="Top" Width="308" Click="Button_GetTomorrowsMatches_Click" Height="33"/>
+            </Grid>
+        </Border>
         <!--<Button x:Name="Button_ClearTables" Style="{StaticResource AccentedSquareButtonStyle}" Content="Clear Tables" HorizontalAlignment="Left" Margin="606,5,0,0" VerticalAlignment="Top" Width="108" Click="Button_ClearTables_Click"/>-->
 
         <!--<TextBox x:Name="TextBox_MatchingMatches" HorizontalAlignment="Left" Height="271" Margin="15,267,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="651"/>-->

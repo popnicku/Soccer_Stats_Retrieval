@@ -69,9 +69,12 @@ namespace Soccer
             Thread getLinksThread = new Thread(() => GetLinksFromPage(url));
             getLinksThread.Start();
 
-            if (flashScore == null)
+            if (MainWindow.main.Toggle_ParseOdds.IsChecked == true)
             {
-                flashScore = new FlashScore();
+                if (flashScore == null)
+                {
+                    flashScore = new FlashScore();
+                }
             }
         }
 
@@ -131,7 +134,6 @@ namespace Soccer
 
             await MainWindow.main.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                MainWindow.main.Label_FindingMatches.Content = "Finished";
                 MainWindow.main.FlyOut_FindingMatches.Visibility = System.Windows.Visibility.Collapsed;
 
                 string x = (Assembly.GetEntryAssembly().Location + "");
@@ -183,7 +185,16 @@ namespace Soccer
                     matchToAdd.CleanSheets = STR_cleanSheets;
                     matchToAdd.MatchName = STR_matchName;
                     //get odd for the specific match
-                    STR_cota = flashScore.GetOddForMatch(STR_matchName);
+
+
+                    if (GetParseToggleState())
+                    {
+                        STR_cota = flashScore.GetOddForMatch(STR_matchName);
+                    }
+                    else
+                    {
+                        STR_cota = -1;
+                    }
 
                     matchToAdd.Cota = STR_cota;
 
@@ -191,6 +202,11 @@ namespace Soccer
                     MainWindow.main.GoodMatchesQueue.Enqueue(matchToAdd);
                 }
             }
+        }
+
+        private bool GetParseToggleState()
+        {
+            return MainWindow.main.ParseOdds;
         }
 
         private string GetEncodedURL(string encodedUrl)
@@ -326,7 +342,10 @@ namespace Soccer
 
         public void CloseDriver()
         {
-            flashScore.CloseDriver();
+            if (flashScore != null)
+            {
+                flashScore.CloseDriver();
+            }
         }
 
         private void PushStringToQueue(string stringToSend)
