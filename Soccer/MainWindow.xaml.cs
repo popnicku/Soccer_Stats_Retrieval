@@ -5,8 +5,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Media;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -182,6 +184,13 @@ namespace Soccer
             bw.RunWorkerCompleted += (sender2, e2) =>
             {
                 FlyOut_FindingMatches.Visibility = Visibility.Collapsed;
+
+                string x = (Assembly.GetEntryAssembly().Location + "");
+                x = x.Replace("Soccer.exe", @"sounds\sound.wav");
+                x = x.Replace(@"\bin\Debug", "");
+                SoundPlayer player = new SoundPlayer();
+                player.SoundLocation = x;
+                player.Play();
             };
 
             bw.RunWorkerAsync();
@@ -202,7 +211,7 @@ namespace Soccer
             FlyOut_FindingMatches.Header = "Getting Tomorrow's matches, please wait...";
             FlyOut_FindingMatches.Visibility = Visibility.Visible;
             //Parser = new HTML_Parser("http://www.soccerstats.com/matches.asp?matchday=2");
-            Parser.InitParser("http://www.soccerstats.com/matches.asp?matchday=5");
+            Parser.InitParser("http://www.soccerstats.com/matches.asp?matchday=2");
 
         }
 

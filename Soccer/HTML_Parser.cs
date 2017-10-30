@@ -11,6 +11,8 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Web;
 using System.IO;
+using System.Media;
+using System.Reflection;
 
 namespace Soccer
 {
@@ -131,6 +133,13 @@ namespace Soccer
             {
                 MainWindow.main.Label_FindingMatches.Content = "Finished";
                 MainWindow.main.FlyOut_FindingMatches.Visibility = System.Windows.Visibility.Collapsed;
+
+                string x = (Assembly.GetEntryAssembly().Location + "");
+                x = x.Replace("Soccer.exe", @"sounds\sound.wav");
+                x = x.Replace(@"\bin\Debug", "");
+                SoundPlayer player = new SoundPlayer();
+                player.SoundLocation = x;
+                player.Play();
                 //MainWindow.main.Label_LinksFound.Content = PageData.MatchLink.Count.ToString();
             }));
         }
