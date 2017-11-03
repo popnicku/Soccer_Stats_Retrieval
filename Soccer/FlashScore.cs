@@ -36,7 +36,7 @@ namespace Soccer
             if (MainPageMatchesList == null)
             {
                 MainPageMatchesList = GetMatchesList("http://flashscore.com");
-                foreach(IWebElement singleMatch in MainPageMatchesList)
+                foreach (IWebElement singleMatch in MainPageMatchesList)
                 {
                     string nameToAdd = singleMatch.Text;
                     string link;
@@ -53,7 +53,7 @@ namespace Soccer
 
         private void StartPhantomServer()
         {
-            if(JSDriver == null)
+            if (JSDriver == null)
             {
                 JSDriver = new PhantomJSDriver();
             }
@@ -100,62 +100,62 @@ namespace Soccer
                     matchOdd = NO_ODD_ON_FLASHSCORE;
                 }
             }
-            else if(oddUrlForMatch == "statelException")
+            else if (oddUrlForMatch == "statelException")
             {
                 return -3;
             }
             return matchOdd;
         }
 
-       /* public string GetLinkForMatch(string matchName)
-        {
-            string aux = null;
+        /* public string GetLinkForMatch(string matchName)
+         {
+             string aux = null;
 
-            string homeTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[0];
-            string awayTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[1];
+             string homeTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[0];
+             string awayTeam = matchName.Split(new string[] { " vs " }, StringSplitOptions.None)[1];
 
-            homeTeam = ReplaceShortString(homeTeam);    //homeTeam.Replace("Standard", "St.");
-            awayTeam = ReplaceShortString(awayTeam);    //awayTeam.Replace("Standard", "St.");
+             homeTeam = ReplaceShortString(homeTeam);    //homeTeam.Replace("Standard", "St.");
+             awayTeam = ReplaceShortString(awayTeam);    //awayTeam.Replace("Standard", "St.");
 
-            string homeTeamFromFlash = null, awayTeamFromFlash = null;
+             string homeTeamFromFlash = null, awayTeamFromFlash = null;
 
-            string foundMatchLink = null;
-            foreach (IWebElement singleMatch in MainPageMatchesList)
-            {
-                if (singleMatch != null)
-                {
+             string foundMatchLink = null;
+             foreach (IWebElement singleMatch in MainPageMatchesList)
+             {
+                 if (singleMatch != null)
+                 {
 
 
-                    //match.Text:
-                    //  "22:00  \r\nLille\r\nMarseille"
-                    //  "20:30  \r\nJusto Jose de Urquiza\r\n-\r\nDock Sud\r\n   "
-                    try
-                    {
-                        aux = singleMatch.Text.Replace("\r\n-\r\n", "\r\n");
-                        aux = aux.Replace("\r", "");
-                    }
-                    catch(StaleElementReferenceException e)
-                    {
-                        //Console.WriteLine(e.Message);
-                        return "statelException";
-                        //break;
-                    }
+                     //match.Text:
+                     //  "22:00  \r\nLille\r\nMarseille"
+                     //  "20:30  \r\nJusto Jose de Urquiza\r\n-\r\nDock Sud\r\n   "
+                     try
+                     {
+                         aux = singleMatch.Text.Replace("\r\n-\r\n", "\r\n");
+                         aux = aux.Replace("\r", "");
+                     }
+                     catch(StaleElementReferenceException e)
+                     {
+                         //Console.WriteLine(e.Message);
+                         return "statelException";
+                         //break;
+                     }
 
-                    homeTeamFromFlash = aux.Split('\n')[1];
-                    awayTeamFromFlash = aux.Split('\n')[2];
+                     homeTeamFromFlash = aux.Split('\n')[1];
+                     awayTeamFromFlash = aux.Split('\n')[2];
 
-                    if (homeTeam.Contains(homeTeamFromFlash) || homeTeamFromFlash.Contains(homeTeam)) // home team found
-                    {
-                        if (awayTeam.Contains(awayTeamFromFlash) || awayTeamFromFlash.Contains(awayTeam)) // awayTeam Found
-                        {
-                            foundMatchLink = singleMatch.GetAttribute("id").Split('_')[2];
-                            break;
-                        }
-                    }
-                }
-            }
-            return foundMatchLink;
-        }*/
+                     if (homeTeam.Contains(homeTeamFromFlash) || homeTeamFromFlash.Contains(homeTeam)) // home team found
+                     {
+                         if (awayTeam.Contains(awayTeamFromFlash) || awayTeamFromFlash.Contains(awayTeam)) // awayTeam Found
+                         {
+                             foundMatchLink = singleMatch.GetAttribute("id").Split('_')[2];
+                             break;
+                         }
+                     }
+                 }
+             }
+             return foundMatchLink;
+         }*/
 
 
         public string GetLinkForMatch(string matchName)
@@ -201,7 +201,7 @@ namespace Soccer
                 stringToReturn = stringToReturn.Replace("Al ", "Al-");
                 //stringToReturn = stringToReturn.Replace("Graffin Vlasim ", "Vlasim");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("[ERROR] exception: " + e.Message);
             }

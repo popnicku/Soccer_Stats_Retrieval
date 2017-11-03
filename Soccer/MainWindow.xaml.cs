@@ -47,13 +47,13 @@ namespace Soccer
             main = this;
             InitializeComponent();
             {
-                DropDown_MatchDay.Items.Add("Monday");
-                DropDown_MatchDay.Items.Add("Tuesday");
-                DropDown_MatchDay.Items.Add("Wednesday");
-                DropDown_MatchDay.Items.Add("Thursday");
-                DropDown_MatchDay.Items.Add("Friday");
-                DropDown_MatchDay.Items.Add("Saturday");
-                DropDown_MatchDay.Items.Add("Sunday");
+                DropDown_MatchDay.Items.Add("Day 0");
+                DropDown_MatchDay.Items.Add("Day 1");
+                DropDown_MatchDay.Items.Add("Day 2");
+                DropDown_MatchDay.Items.Add("Day 3");
+                DropDown_MatchDay.Items.Add("Day 4");
+                DropDown_MatchDay.Items.Add("Day 5");
+                DropDown_MatchDay.Items.Add("Day 6");
             }
             //this.FlashScore = new FlashScore();
 
@@ -70,9 +70,9 @@ namespace Soccer
 
         public void UpdateUI_Thread()
         {
-            for(; ;)
+            for (; ; )
             {
-                if(LinksQueue.Count > 0)
+                if (LinksQueue.Count > 0)
                 {
                     if (LinksQueue.TryDequeue(out string receivingStruct))
                     {
@@ -86,6 +86,7 @@ namespace Soccer
                             });
                             this.DataGrid_MatchesGrid.ItemsSource = List;
                             Label_LinksFound.Content = this.DataGrid_MatchesGrid.Items.Count;
+                            ProgressBar_.Maximum = DataGrid_MatchesGrid.Items.Count - 1;
                             Button_Start.IsEnabled = true;
                         }));
                     }
@@ -95,11 +96,11 @@ namespace Soccer
 
         public void UpdateGoodMatchesUI()
         {
-            for(; ; )
+            for (; ; )
             {
-                if(GoodMatchesQueue.Count > 0)
+                if (GoodMatchesQueue.Count > 0)
                 {
-                    if(GoodMatchesQueue.TryDequeue(out MatchDataStruct receivingStruct))
+                    if (GoodMatchesQueue.TryDequeue(out MatchDataStruct receivingStruct))
                     {
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
@@ -107,10 +108,10 @@ namespace Soccer
                             {
                                 Name = receivingStruct.MatchName,
                                 Link = receivingStruct.MatchLink,
-                                Cota = receivingStruct.Cota == -1 ? "N/A" : 
+                                Cota = receivingStruct.Cota == -1 ? "N/A" :
                                 (
                                     (
-                                        receivingStruct.Cota == -2 ? ("No odd") : 
+                                        receivingStruct.Cota == -2 ? ("No odd") :
                                         (
                                             receivingStruct.Cota == -3 ? ("Exc") : receivingStruct.Cota.ToString()
                                         )
@@ -171,19 +172,19 @@ namespace Soccer
         {
             switch (day)
             {
-                case "Monday":
-                    return 5;
-                case "Tuesday":
+                case "Day 0":
+                    return 0;
+                case "Day 1":
+                    return 1;
+                case "Day 2":
                     return 2;
-                case "Wednesday":
+                case "Day 3":
                     return 3;
-                case "Thursday":
+                case "Day 4":
                     return 4;
-                case "Friday":
-                    return 6;
-                case "Saturday":
-                    return 7;
-                case "Sunday":
+                case "Day 5":
+                    return 5;
+                case "Day 6":
                     return 1;
                 default:
                     return -1;
@@ -203,6 +204,7 @@ namespace Soccer
 
             FlyOut_FindingMatches.Header = "Finding matches to bet, please wait...";
             FlyOut_FindingMatches.Visibility = Visibility.Visible;
+            ProgressBar_.Visibility = Visibility.Visible;
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += (callbackSender, callbackEvent) =>
             {
@@ -215,6 +217,7 @@ namespace Soccer
                         Thread th = new Thread(() => Parser.ProcessMatchesPage(lnk));
                         th.Start();
                         Thread.Sleep(200);
+
                     }
                 }
             };
@@ -222,6 +225,7 @@ namespace Soccer
             bw.RunWorkerCompleted += (sender2, e2) =>
             {
                 FlyOut_FindingMatches.Visibility = Visibility.Collapsed;
+                ProgressBar_.Visibility = Visibility.Collapsed;
 
                 string x = (Assembly.GetEntryAssembly().Location + "");
                 x = x.Replace("Soccer.exe", @"sounds\sound.wav");
@@ -253,7 +257,7 @@ namespace Soccer
         private async void Button_GetTomorrowsMatches_Click(object sender, RoutedEventArgs e)
         {
 
-            if(DropDown_MatchDay.SelectedIndex >= 0)
+            if (DropDown_MatchDay.SelectedIndex >= 0)
             {
                 FlyOut_FindingMatches.Header = "Getting " + DropDown_MatchDay.SelectedValue + " matches, please wait...";
                 FlyOut_FindingMatches.Visibility = Visibility.Visible;

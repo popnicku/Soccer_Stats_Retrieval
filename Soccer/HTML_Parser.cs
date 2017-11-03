@@ -32,6 +32,7 @@ namespace Soccer
         public float Average1_and_4;
         public float[] CleanSheets;
         public float Cota;
+        public int MatchType;
     };
 
 
@@ -48,6 +49,8 @@ namespace Soccer
         private const int B = 1;
         private const int C = 2;
         private const int D = 3;
+        private const int _NORMAL_ = 4;
+        private const int _LEAGUE_ = 5;
 
         // private const int _MATCHES_LIMIT_ = 100;
 
@@ -96,17 +99,15 @@ namespace Soccer
             HtmlDocument resultat = new HtmlDocument();
             resultat.LoadHtml(source);
 
-            List<HtmlNode> tofTitle = resultat.DocumentNode.Descendants().Where(
-                    x => (
-                        x.Name == "tr" &&
-                        x.Attributes["class"] != null &&
-                        x.Attributes["class"].Value.Contains("trow8"))).ToList();
+            List<HtmlNode> tofTitleList = resultat.DocumentNode.Descendants().Where(
+                    xX => (
+                        xX.Name == "tr" &&
+                        xX.Attributes["class"] != null && xX.Attributes["class"].Value.Contains("trow8"))).ToList();
 
 
-
-            for (int i = 0; i < tofTitle.Count; i++)
+            for (int i = 0; i < tofTitleList.Count; i++)
             {
-                List<HtmlNode> td = tofTitle[i].Descendants("td").ToList();
+                List<HtmlNode> td = tofTitleList[i].Descendants("td").ToList();
 
                 foreach (HtmlNode item in td)
                 {
@@ -116,7 +117,7 @@ namespace Soccer
                         if (foundNode.Count > 0)
                         {
                             link = foundNode[0].GetAttributeValue("href", null);
-                            if (link.Contains("pmatch.asp?"))
+                            if (link.Contains("pmatch.asp?") || link.Contains("leagueview_team.asp?"))
                             {
                                 PageData.MatchLink.Add(link);
                                 //PageData.MatchName.Add(item.InnerText);
@@ -126,7 +127,7 @@ namespace Soccer
                             }
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                     }
                 }
@@ -135,7 +136,8 @@ namespace Soccer
             await MainWindow.main.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 MainWindow.main.FlyOut_FindingMatches.Visibility = System.Windows.Visibility.Collapsed;
-
+                MainWindow.main.ProgressBar_.Visibility = System.Windows.Visibility.Collapsed;
+}));
                 string x = (Assembly.GetEntryAssembly().Location + "");
                 x = x.Replace("Soccer.exe", @"sounds\sound.wav");
                 x = x.Replace(@"\bin\Debug", "");
@@ -143,7 +145,7 @@ namespace Soccer
                 player.SoundLocation = x;
                 player.Play();
                 //MainWindow.main.Label_LinksFound.Content = PageData.MatchLink.Count.ToString();
-            }));
+            
         }
 
         public void InitializeJSDriver()
@@ -161,23 +163,33 @@ namespace Soccer
             float STR_average1and4 = 0;
             float[] STR_cleanSheets = new float[2];
             float STR_cota = 0;
+            int STR_Type;
 
 
             MatchDataStruct matchToAdd = new MatchDataStruct();
             if (url != null)
             {
 
+                if (url.Contains("leagueview_team.asp?"))
+                {
+                    STR_Type = _LEAGUE_;
+                }
+                else
+                {
+                    STR_Type = _NORMAL_;
+                }
+
                 STR_matchUrl = GetEncodedURL("http://soccerstats.com/" + url);
                 string pageContent = await GetPageContent(url);
                 if (pageContent != null)
                 {
-                    STR_scoredAndConceded = Get_ScoredAndConceded(pageContent);
+                    STR_scoredAndConceded = Get_ScoredAndConceded(pageContent, STR_Type);
                     STR_average1and4 = Get_Average1And4(pageContent);
-                    STR_cleanSheets = Get_CleanSheets(pageContent);
-                    STR_matchName = Get_MatchName(pageContent);
+                    STR_cleanSheets = Get_CleanSheets(pageContent, STR_Type);
+                    STR_matchName = Get_MatchName(pageContent, STR_Type);
                 }
 
-                if (IsMatchWorthBetting(STR_scoredAndConceded, STR_average1and4, STR_cleanSheets))
+                if (IsMatchWorthBetting(STR_scoredAndConceded, STR_average1and4, STR_cleanSheets, STR_Type))
                 {
                     matchToAdd.MatchLink = STR_matchUrl;
                     matchToAdd.Scored_and_Conceded = STR_scoredAndConceded;
@@ -187,7 +199,7 @@ namespace Soccer
                     //get odd for the specific match
 
 
-                    if (GetParseToggleState())
+                    if (GetParseToggleState() && STR_Type == _NORMAL_)
                     {
                         STR_cota = flashScore.GetOddForMatch(STR_matchName);
                     }
@@ -202,6 +214,11 @@ namespace Soccer
                     MainWindow.main.GoodMatchesQueue.Enqueue(matchToAdd);
                 }
             }
+
+            MainWindow.main.Dispatcher.Invoke(new Action(() =>
+            {
+                MainWindow.main.ProgressBar_.Value += 1;
+            }));
         }
 
         private bool GetParseToggleState()
@@ -219,41 +236,73 @@ namespace Soccer
                     return decodedString.ToString();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return "Caught exception: " + e.Message;
             }
         }
 
-        private bool IsMatchWorthBetting(float[] scoredAndConceded, float average1And4, float[] cleanSheets)
+        private bool IsMatchWorthBetting(float[] scoredAndConceded, float average1And4, float[] cleanSheets, int type)
         {
-            if (scoredAndConceded[0] >= 2 && scoredAndConceded[1] >= 2 && scoredAndConceded[2] >= 2 && scoredAndConceded[3] >= 2 &&
-                average1And4 >= 1.5 &&
-                cleanSheets[0] <= 20 && cleanSheets[1] <= 20)
-                return true;
+            if (type == _NORMAL_)
+            {
+                if (scoredAndConceded[0] >= 2 && scoredAndConceded[1] >= 2 && scoredAndConceded[2] >= 2 && scoredAndConceded[3] >= 2 &&
+                    average1And4 >= 1.5 &&
+                    cleanSheets[0] <= 20 && cleanSheets[1] <= 20)
+                    return true;
+            }
+            else if (type == _LEAGUE_)
+            {
+                if (scoredAndConceded[0] >= 2 && scoredAndConceded[1] >= 2 && scoredAndConceded[2] >= 2 &&
+                    cleanSheets[0] <= 20 && cleanSheets[1] <= 20)
+                    return true;
+            }
             return false;
         }
 
-        private float[] Get_ScoredAndConceded(string pageContent)
+        private float[] Get_ScoredAndConceded(string pageContent, int type)
         {
+            Match matchToDo;
+
             float[] goals = new float[4];
             int index = 0;
-
+            //regex.Match(pageContent).Groups[1]
             Regex regex = new Regex(@"Goals conceded per match(?s)(.*)Matches over 1.5 goals");
-            foreach(Match match in regex.Matches(pageContent))
+            foreach (Match match in regex.Matches(pageContent))
             {
-                Regex regex_Number = new Regex(@"([0-9]{1})\.[0-9]*");
-                foreach(Match match_Number in regex_Number.Matches(match.Value))
+                matchToDo = match;
+                if (type == _NORMAL_)
                 {
-                    if(index >= 2 && index <= 5)
+                    Regex regex_Number = new Regex(@"([0-9]{1})\.[0-9]*");
+                    foreach (Match match_Number in regex_Number.Matches(matchToDo.Value))
+                    {
+                        if (index >= 2 && index <= 5)
+                        {
+                            //tbd if condition for if (float.Parse(match_Number.Value) >= 2)
+                            goals[index - 2] = float.Parse(match_Number.Value);
+                        }
+                        index++;
+                    }
+                }
+                else if (type == _LEAGUE_)
+                {
+
+                    string string2 = regex.Match(pageContent).Groups[1].Value; // parse again
+                    regex = new Regex(@"Goals conceded per match(?s)(.*)");
+                    matchToDo = regex.Match(string2);
+
+                    Regex regex_Number = new Regex(@"([0-9]{1})\.[0-9]*");
+                    foreach (Match match_Number in regex_Number.Matches(matchToDo.Value))
                     {
                         //tbd if condition for if (float.Parse(match_Number.Value) >= 2)
-                        goals[index - 2] = float.Parse(match_Number.Value);
+                        if (index >= 3)
+                        {
+                            goals[index - 3] = float.Parse(match_Number.Value);
+                        }
+                        index++;
                     }
-                    index++;
                 }
             }
-
             return goals;
         }
 
@@ -264,11 +313,11 @@ namespace Soccer
 
             Regex regex = new Regex(@"average \(1\) & \(4\) values(?s)(.*)average \(2\) & \(3\) values");
             Match match = regex.Match(pageContent);
-            if(match.Success)
+            if (match.Success)
             {
                 Regex regex_Number = new Regex(@"([0-9]{1})\.[0-9]*");
                 Match match_Number = regex_Number.Match(match.Value);
-                if(match_Number.Success)
+                if (match_Number.Success)
                 {
                     averageGoals = float.Parse(match_Number.Value);
                 }
@@ -276,40 +325,79 @@ namespace Soccer
             return averageGoals;
         }
 
-        private float[] Get_CleanSheets(string pageContent)
+        private float[] Get_CleanSheets(string pageContent, int type)
         {
             float[] cleanSheets = new float[2];
             int index = 0;
-
-            Regex regex = new Regex(@"NO GOAL(?s)(.*)Won-to-nil");
-            Match match = regex.Match(pageContent);
-            if(match.Success)
+            if (type == _NORMAL_)
             {
-                Regex regex_Numbers = new Regex(@"([0-9]{1,})\%<");
-                foreach(Match match_Number in regex_Numbers.Matches(match.Value))
+
+                Regex regex = new Regex(@"NO GOAL(?s)(.*)Won-to-nil");
+                Match match = regex.Match(pageContent);
+                if (match.Success)
                 {
-                    if(index == 0 || index == 3)
+                    Regex regex_Numbers = new Regex(@"([0-9]{1,})\%<");
+                    foreach (Match match_Number in regex_Numbers.Matches(match.Value))
                     {
-                        cleanSheets[(index * 3) % 8] = float.Parse(match_Number.Value.Replace("%<", ""));
+                        if (index == 0 || index == 3)
+                        {
+                            cleanSheets[(index * 3) % 8] = float.Parse(match_Number.Value.Replace("%<", ""));
+                        }
+                        index++;
                     }
-                    index++;
+                }
+            }
+            else
+            {
+                Regex regex = new Regex(@"Clean sheets(?s)(.*)Won-to-nil");
+                Match match = regex.Match(pageContent);
+                if (match.Success)
+                {
+
+                    string string2 = match.Groups[1].Value;
+                    regex = new Regex(@"Clean sheets(?s)(.*)");
+                    match = regex.Match(string2);
+
+
+                    Regex regex_Numbers = new Regex(@"([0-9]{1,})\%<");
+                    foreach (Match match_Number in regex_Numbers.Matches(match.Value))
+                    {
+                        if (index < 2)
+                        {
+                            cleanSheets[index] = float.Parse(match_Number.Value.Replace("%<", ""));
+                        }
+                        index++;
+                    }
                 }
             }
             return cleanSheets;
         }
 
-        private string  Get_MatchName(string pageContent)
+        private string Get_MatchName(string pageContent, int type)
         {
             string title = null;
-
-            Regex regex = new Regex(@"<title>(?s)(.*) - team");
-            Match match = regex.Match(pageContent);
-            if(match.Success)
+            if (type == _NORMAL_)
             {
-                title = match.Value.Replace("<title>", "");
-                title = title.Replace(" - team", "");
-
-
+                Regex regex = new Regex(@"<title>(?s)(.*) - team");
+                Match match = regex.Match(pageContent);
+                if (match.Success)
+                {
+                    title = match.Value.Replace("<title>", "");
+                    title = title.Replace(" - team", "");
+                }
+            }
+            else
+            {
+                Regex regex = new Regex(@"<title>(?s)(.*)\</title>");
+                Match match = regex.Match(pageContent);
+                if (match.Success)
+                {
+                    title = match.Value.Replace("<title>Champions League results, stats and scores - stats and results, ", "");
+                    title = title.Replace("team ", "");
+                    title = title.Replace("</title>", "");
+                    string[] splitTeams = title.Split('-');
+                    title = splitTeams[0] + "vs " + splitTeams[1];
+                }
             }
             return title;
         }
