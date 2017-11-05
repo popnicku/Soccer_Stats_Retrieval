@@ -199,6 +199,12 @@ namespace Soccer
                 stringToReturn = stringToReturn.Replace("Walld.", "Walldorf");
                 //stringToReturn = stringToReturn.Replace("Hessen Kassel", "Kassel");
                 stringToReturn = stringToReturn.Replace("Al ", "Al-");
+                stringToReturn = stringToReturn.Replace("Athletic ", "Ath ");
+                stringToReturn = stringToReturn.Replace("An ", "Anadolu ");
+                stringToReturn = stringToReturn.Replace("HSC ", "Hsc ");
+                stringToReturn = stringToReturn.Replace("Graafs.", "Graafschap");
+                stringToReturn = stringToReturn.Replace("Irtysh .", "I. ");
+                stringToReturn = stringToReturn.Replace("Shak. ", "Shaktar ");
                 //stringToReturn = stringToReturn.Replace("Graffin Vlasim ", "Vlasim");
             }
             catch (Exception e)
