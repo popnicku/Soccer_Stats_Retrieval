@@ -5,22 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:Soccer"
-                      Closing="MetroWindow_Closing"
+        GlowBrush="Black"
+        ResizeMode="CanResizeWithGrip"
+                      
+        Closing="MetroWindow_Closing"
         mc:Ignorable="d"
-        Title="Soccer Stats Retrieval" Height="720" Width="1360">
+        Title="Soccer Stats Retrieval" 
+        Height="720" Width="1360"
+        MinHeight="650"  MinWidth="1300">
     <Grid>
         <Label Content="0" x:Name="Label_LinksFound" HorizontalAlignment="Left" Margin="473,5,0,0" VerticalAlignment="Top"/>
         <Label Content="Matches found:" HorizontalAlignment="Left" Margin="381,5,0,0" VerticalAlignment="Top"/>
 
-        <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,36,0,0">
-            <DataGrid x:Name="DataGrid_MatchesGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="213" Margin="0,0,0,0" VerticalAlignment="Top" Width="576">
+        <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Top" Margin="20,36,800,0">
+            <DataGrid x:Name="DataGrid_MatchesGrid" AutoGenerateColumns="False" Height="214" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="576">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Match Link" Binding="{Binding Path=MatchLink}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
         <Button Content="Get Matches Data" x:Name="Button_Start" IsEnabled="False" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="194,5,0,0" VerticalAlignment="Top" Click="Button_Start_Click" Width="182"/>
-        
+
         <Border BorderBrush="Black" BorderThickness="1" Margin="20,275,20,20">
             <DataGrid x:Name="DataGrid_GoodMatches" AutoGenerateColumns="False" Height="388"  Margin="0,0,0,0" VerticalAlignment="Top">
                 <DataGrid.Columns>
@@ -38,23 +43,32 @@
             </DataGrid>
         </Border>
         <Button x:Name="Button_GetTodaysMatches" Content="Get Today's Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="15,4,0,0" VerticalAlignment="Top" Width="163" Click="Button_GetTodaysMatches_Click"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="215" Margin="646,36,0,0" VerticalAlignment="Top" Width="350">
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="215" Margin="0,37,437,0" VerticalAlignment="Top" Width="350">
             <Grid x:Name="Settings_Panel" Margin="0,0,0,-1">
                 <Label Content="Parse Odds:" FontSize="18" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
-                <Controls:ToggleSwitch  x:Name="Toggle_ParseOdds" IsChecked="True" IsCheckedChanged="Toggle_ParseOdds_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,10,0,163"/>
+                <Controls:ToggleSwitch IsEnabled="False" x:Name="Toggle_ParseOdds" IsChecked="False" IsCheckedChanged="Toggle_ParseOdds_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,10,0,163"/>
 
                 <Label Content="Autostart:" Visibility="Hidden" FontSize="18" HorizontalAlignment="Left" Margin="20,49,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
                 <Controls:ToggleSwitch Visibility="Hidden"  x:Name="Toggle_AutoStart" IsChecked="False" IsCheckedChanged="Toggle_AutoStart_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,49,0,124"/>
 
-                <Label Content="Match Day:" FontSize="18" HorizontalAlignment="Left" Margin="20,87,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
-                <Controls:SplitButton x:Name="DropDown_MatchDay" Height="20"  Margin="194,92,20,93">
+                <Label Content="Match Day:" FontSize="18" HorizontalAlignment="Left" Margin="20,106,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
+                <Controls:SplitButton x:Name="DropDown_MatchDay" Height="20"  Margin="194,112,20,76">
                 </Controls:SplitButton>
 
                 <Button x:Name="Button_GetTomorrowsMatches" Content="Get Future Matches" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Center" Margin="20,157,20,0" VerticalAlignment="Top" Width="308" Click="Button_GetTomorrowsMatches_Click" Height="33"/>
+                <Label Content="Compute" FontSize="18" HorizontalAlignment="Left" Margin="20,56,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
+                <Controls:ToggleSwitch IsEnabled="True" x:Name="Toggle_Compute" IsChecked="True" IsCheckedChanged="Toggle_ParseOdds_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,56,0,117"/>
             </Grid>
         </Border>
-        <Calendar x:Name="Calendar_" HorizontalAlignment="Left" Margin="1035,36,0,0" VerticalAlignment="Top" Height="215" Width="183" FirstDayOfWeek="Monday" />
-
+        <Border BorderBrush="Black" BorderThickness="1"  x:Name="Settings_Panel_Copy" Margin="928,38,199,437">
+            <Grid>
+                <Label Content="Autostart:" Visibility="Hidden" FontSize="18" HorizontalAlignment="Left" Margin="20,49,0,0" VerticalAlignment="Top" Height="38" Width="126"/>
+                <Controls:ToggleSwitch Visibility="Hidden"  x:Name="Toggle_AutoStart1" IsChecked="False" IsCheckedChanged="Toggle_AutoStart_IsCheckedChanged" HorizontalAlignment="Left" Margin="194,49,0,124"/>
+                <Label Content="Algorithm Selection:" FontSize="18" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="38" Width="215"/>
+                <Controls:SplitButton x:Name="DropDown_Algorithm"  Margin="10,49,10,133"/>
+            </Grid>
+        </Border>
+        <Calendar x:Name="Calendar_" HorizontalAlignment="Right" Margin="0,36,20,0" VerticalAlignment="Top" Height="216" Width="174" FirstDayOfWeek="Monday" />
         <!--<Button x:Name="Button_ClearTables" Style="{StaticResource AccentedSquareButtonStyle}" Content="Clear Tables" HorizontalAlignment="Left" Margin="606,5,0,0" VerticalAlignment="Top" Width="108" Click="Button_ClearTables_Click"/>-->
 
         <!--<TextBox x:Name="TextBox_MatchingMatches" HorizontalAlignment="Left" Height="271" Margin="15,267,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="651"/>-->

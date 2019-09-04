@@ -37,7 +37,7 @@ namespace Soccer
         public ConcurrentQueue<MatchDataStruct> GoodMatchesQueue = new ConcurrentQueue<MatchDataStruct>();
         private ObservableCollection<MatchedMatches> GoodMatchesList = new ObservableCollection<MatchedMatches>();
 
-        public bool ParseOdds = true;
+        public bool ParseOdds = false;
         //private bool AutoStart = false;
 
         //public FlashScore FlashScore;
@@ -47,6 +47,7 @@ namespace Soccer
             main = this;
             InitializeComponent();
             {
+                //Add Days to Dropdown
                 DropDown_MatchDay.Items.Add("Monday");
                 DropDown_MatchDay.Items.Add("Tuesday");
                 DropDown_MatchDay.Items.Add("Wednesday");
@@ -54,6 +55,10 @@ namespace Soccer
                 DropDown_MatchDay.Items.Add("Friday");
                 DropDown_MatchDay.Items.Add("Saturday");
                 DropDown_MatchDay.Items.Add("Sunday");
+                //Add Days to Algorithm Selection
+                DropDown_Algorithm.Items.Add("Match Winner"); // default
+                DropDown_Algorithm.Items.Add("Over/Under 2.5");
+                DropDown_Algorithm.SelectedIndex = 0;
             }
             //this.FlashScore = new FlashScore();
 
@@ -157,7 +162,9 @@ namespace Soccer
                 resultat.LoadHtml(source);
                 //GetDataFromPage(resultat.DocumentNode.OuterHtml, Encoding.UTF8.GetString(bytes));
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         /*
@@ -174,20 +181,24 @@ namespace Soccer
                 case "Monday":
                     return 5;
                 case "Tuesday":
-                    return 2;
+                    return 5;
                 case "Wednesday":
-                    return 3;
+                    return 2;
                 case "Thursday":
-                    return 4;
+                    return 3;
                 case "Friday":
-                    return 6;
+                    return 4;
                 case "Saturday":
-                    return 7;
+                    return 3;
                 case "Sunday":
                     return 1;
                 default:
                     return -1;
             }
+        }
+
+        private void AcceptCookies()
+        {
         }
 
         /* ============================================================================================================================ */
@@ -280,6 +291,15 @@ namespace Soccer
             }
             System.Environment.Exit(1);
 
+        }
+
+        public bool NeedCompute()
+        {
+            bool? isChecked = null;
+
+            Dispatcher.Invoke(()=>isChecked = Toggle_Compute.IsChecked);
+
+            return isChecked == true ? true : false;
         }
 
         private void Toggle_ParseOdds_IsCheckedChanged(object sender, EventArgs e)
